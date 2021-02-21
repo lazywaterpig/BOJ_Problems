@@ -31,13 +31,17 @@ int main(){
 
     cin >> num >> k;
     for(int i=0; i<num; i++){
-    	int tmp;
-        cin >> tmp;
+    	char ctmp;
+        int tmp;
+        cin >> ctmp;
+        if(ctmp=='G') tmp=1;
+        if(ctmp=='B') tmp=2;
+        if(ctmp=='R') tmp=3;
         if(i==0) arr[n++]=tmp;
         else if(tmp!=arr[n-1]) arr[n++]=tmp;
     }
 
-    cout << solve(0, n-1);
+    cout << solve(0, n-1)+1;
 
     return 0;
 }
