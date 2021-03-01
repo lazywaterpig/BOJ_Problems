@@ -8,10 +8,7 @@ int bcnt=0, clockwise=0; //필요한 경우를 대비해 예비 board[X][][], bc
 
 
 /* 해결 안된 케이스
-solve simple
-9 5
-3 4
-4 5
+
 
 */
 
@@ -138,8 +135,14 @@ void solve_2x(){
     if(c2==M && c1!=M) return true;  */
 
 void solve_no_boundaries(){
-    
+    if(abs(r1-r2)%2!=0 || abs(c1-c2)%2)!=0){
+
+    }
+    else{
+        //임시
+    }
 }
+
 
 void solve_simple(){
     //경계값 없는경우
