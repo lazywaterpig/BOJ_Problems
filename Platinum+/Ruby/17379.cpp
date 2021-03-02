@@ -1,16 +1,10 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int N, M, r1, r2, c1, c2; // 다람쥐 1: r(ow)1, c(olumn)1
+int N, M, r1, r2, c1, c2;
 
-char board[10][102][102], tmp_board[102][102], ans[102][102];
-int bcnt=0, clockwise=0; //필요한 경우를 대비해 예비 board[X][][], bcnt=X, 문제풀이의 편의를 위한 board turn, ans를 채워넣은 이후 다시 되돌리기 위한 clockwise
-
-
-/* 해결 안된 케이스
-
-
-*/
+char tmp_board[102][102], ans[102][102];
+int bcnt=0, clockwise=0;
 
 void PrintBoard(){
     cout << "YES" << endl;
@@ -83,14 +77,13 @@ bool IsSimple(){
     if(r2==N && r1!=N) return true;
     if(c1==1 && c2!=1) return true;
     if(c1==M && c2!=M) return true;
-    if(c2==1 && c1!=1) return true; //주어진 땅의 서로 다른 모서리 경계값, 혹은 꼭짓점
-    if(c2==M && c1!=M) return true; //혹은 하나만 경계값
-    if(((r1!=1 && r2!=1) && (r1!=N && r2!=N)) && ((c1!=1 && c2!=1) && (c1!=M && c2!=M))) return true; //둘다 경계값 아닌경우
-    return false; //서로 같은 변 경계값이며 꼭짓점 없는경우
+    if(c2==1 && c1!=1) return true;
+    if(c2==M && c1!=M) return true;
+    if(((r1!=1 && r2!=1) && (r1!=N && r2!=N)) && ((c1!=1 && c2!=1) && (c1!=M && c2!=M))) return true;
+    return false;
 }
 
 void solve_2x(){
-    //board: 2*X size
     if(N!=2) ClockwisePointTurn();
     if(r1!=r2){
         for(int i=1; i<=M; i++) ans[r1][i]='#';
@@ -124,33 +117,91 @@ void solve_2x(){
 
     PrintBoard();
 }
-/*  solve simple else case
-    if(r1==1 && r2!=1) return true; 
-    if(r1==N && r2!=N) return true;
-    if(r2==1 && r1!=1) return true;
-    if(r2==N && r1!=N) return true;
-    if(c1==1 && c2!=1) return true;
-    if(c1==M && c2!=M) return true;
-    if(c2==1 && c1!=1) return true;
-    if(c2==M && c1!=M) return true;  */
 
 void solve_no_boundaries(){
-    if(abs(r1-r2)%2!=0 || abs(c1-c2)%2)!=0){
+    if(abs(c1-c2)%2!=0) ClockwisePointTurn();
 
+    if(abs(r1-r2)%2!=0){
+        for(int i=1; i<=N; i++){
+            char cc;
+            if((r1+i)%2==0) cc='#';
+            else cc='.';
+            for(int j=2; j<=M-1; j++) ans[i][j]=cc;
+        }
+        for(int i=1; i<=N; i++){
+            ans[i][1]='#';
+            ans[i][M]='.';
+        }
+
+        if(clockwise==1) AntiClockwiseBoardTurn();
+        PrintBoard();
     }
     else{
-        //임시
+        if(r1!=r2 && c1!=c2){
+            while(r1<r2 || c1<c2) ClockwisePointTurn();
+
+            for(int i=1; i<=M; i++){
+                ans[1][i]='#';
+                ans[N][i]='.';
+            }
+            for(int i=1; i<=M; i++){
+                char cc;
+                if((c1+i)%2==0) cc='#';
+                else cc='.';
+                for(int j=2; j<=N-1; j++) ans[j][i]=cc;
+            }
+
+            for(int i=c2; i<c1; i++) ans[r2][i]='.';
+            for(int i=c1; i>c2; i--) ans[r1][i]='#';
+            
+            while(clockwise!=0) AntiClockwiseBoardTurn();
+            PrintBoard();
+        }
+        else{
+            while(r1<=r2) ClockwisePointTurn();
+
+            for(int i=1; i<=M; i++){
+                ans[1][i]='#';
+                ans[N][i]='.';
+            }
+            for(int i=1; i<=M; i++){
+                char cc;
+                if(i%2!=0) cc='#';
+                else cc='.';
+                for(int j=2; j<=N-1; j++) ans[j][i]=cc;
+            }
+
+            if(M==3){
+                for(int i=r1; i<N; i++) ans[i][2]='#';
+                for(int i=r1-1; i<=N; i++) ans[i][1]='.';
+                for(int i=r1+1; i<=N; i++) ans[i][3]='.';
+            }
+            else{
+                if(c1!=2){
+                    ans[r1][c1]='#';
+                    ans[r1][c1-1]='#';
+                    ans[r2][c2]='.';
+                    ans[r2][c2-1]='.';
+                }
+                else{
+                    ans[r1][c1]='#';
+                    ans[r1][c1+1]='#';
+                    ans[r2][c2]='.';
+                    ans[r2][c2+1]='.';
+                }
+            }
+
+            while(clockwise!=0) AntiClockwiseBoardTurn();
+            PrintBoard();
+        }
     }
 }
 
-
 void solve_simple(){
-    //경계값 없는경우
     if(((r1!=1 && r2!=1) && (r1!=N && r2!=N)) && ((c1!=1 && c2!=1) && (c1!=M && c2!=M))){
         solve_no_boundaries();
         return;
     }
-    //경계값 다른 둘, 하나
     if(((r1==1 && r2!=1) || (r1==N && r2!=N)) || ((c1==1 && c2!=1) || (c1==M && c2!=M))){
         if(r1==N && r2!=N){
             ClockwisePointTurn();
@@ -219,7 +270,34 @@ void solve_even(){
     if(N==2 || M==2) solve_2x();
     else if(IsSimple()) solve_simple();
     else{
-        return; //임시
+        while(r1!=1) ClockwisePointTurn();
+
+        if(abs(c1-c2)==1 && min(c1, c2)%2==0){
+            cout << "NO" << endl;
+            return;
+        }
+        else{
+            if(min(c1, c2)%2==0){
+                if(c1<c2) c1++;
+                else c2++;
+            }
+            char sc=c1<c2? '#' : '.';
+            char bc=c1>c2? '#' : '.';
+
+            for(int i=1; i<=N; i++){
+                for(int j=1; j<=M; j++) ans[i][j]=bc;
+            }
+
+            for(int i=1; i<=M; i++) ans[N][i]=sc;
+            for(int i=1; i<M; i+=2){
+                for(int j=2; j<N; j++) ans[j][i]=sc;
+            }
+            for(int i=1; i<=min(c1,c2); i++) ans[1][i]=sc;
+            for(int i=2; i<=min(c1,c2)+1; i++) ans[N-1][i]=bc;
+            
+            while(clockwise!=0) AntiClockwiseBoardTurn();
+            PrintBoard();
+        }
     }
 }
 
@@ -227,14 +305,50 @@ void solve_half(){
     if(N==2 || M==2) solve_2x();
     else if(IsSimple()) solve_simple();
     else{
-        return; //임시
+        while(r1!=1) ClockwisePointTurn();
+        
+        for(int i=1; i<=N; i++){
+            for(int j=1; j<=M; j++) ans[i][j]='#';
+        }
+
+        if(M%2==0){
+            for(int i=2; i<N; i+=2){
+                for(int j=2; j<M; j++) ans[i][j]='.';
+            }
+
+            for(int i=1; i<N; i++) ans[i][c2]='.';
+        }
+        else{
+            for(int i=2; i<M; i+=2){
+                for(int j=2; j<N; j++) ans[j][i]='.';
+            }
+
+            for(int i=2; i<M; i++) ans[2][i]='.';
+            ans[r2][c2]='.';
+        }
+
+        while(clockwise!=0) AntiClockwiseBoardTurn();
+        PrintBoard();
     }
 }
 
 void solve_odd(){
     if(IsSimple()) solve_simple();
     else{
-        return; //임시
+        while(r1!=1) ClockwisePointTurn();
+
+        for(int i=1; i<=N; i++){
+            for(int j=1; j<=M; j++) ans[i][j]='#';
+        }
+
+        for(int i=2; i<N; i+=2){
+            for(int j=2; j<M; j++) ans[i][j]='.';
+        }
+
+        for(int i=1; i<N; i++) ans[i][c2]='.';
+
+        while(clockwise!=0) AntiClockwiseBoardTurn();
+        PrintBoard();
     }
 }
 
