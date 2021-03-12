@@ -39,7 +39,8 @@ int main(){
     }
     for(int i=0; i<n; i++) arr[i][i]=0;
     
-    int tmp;
+    char cc;
+    int tmp, ttmp;
     for(int i=0; i<n; i++){
     	v.push_back(vector <string>());
         cin >> tmp;
@@ -47,50 +48,51 @@ int main(){
         c=i+97;
         while(tmp--){
             cin >> s;
-			if(s.find(c) == string::npos){
-				v[i].push_back(s);
-				bound[i]++;
+			if(s.size()==1){
+				cc=s[0];
+				ttmp=cc-'a';
+            	arr[i][ttmp]=1;
+            	piv[i]++;
 			}
+			v[i].push_back(s);
+			bound[i]++;
         }
         sort(v[i].begin(), v[i].end(), cmp);
     }
     
-    for(int j=0; j<n; j++){
-        while(v[j].size()!=0 && v[j][piv[j]].size()<=1){
-        	c=v[j][piv[j]][0];
-        	tmp=c-'a';
-            arr[j][tmp]=1;
-            piv[j]++;
-        }
-    }
-
     int maxv;
-    for(int i=0; i<n; i++){
-        for(int j=0; j<n; j++){
-            while(v[j].size()!=0 && piv[j]<bound[j] && v[j][piv[j]].size()<=i){
-                for(int k=0; k<n; k++){
-                	maxv=-1;
-                	if(j!=k){
-                		for(int l=0; l<v[j][piv[j]].size(); l++){
-        					c=v[j][piv[j]][l];
-        					tmp=c-'a';
-        					if(arr[tmp][k]>maxv) maxv=arr[tmp][k];
-                		}
-						if(arr[j][k]>maxv+1) arr[j][k]=maxv+1;
-                	}
+    int a=6;
+    while(a--){
+	    memset(piv, 0, sizeof(piv));
+        for(int i=0; i<n; i++){
+            for(int j=0; j<n; j++){
+                while(v[j].size()!=0 && piv[j]<bound[j] && v[j][piv[j]].size()<=i){
+                    for(int k=0; k<n; k++){
+                	    maxv=-1;
+                    	if(j!=k){
+                    		for(int l=0; l<v[j][piv[j]].size(); l++){
+        	    				c=v[j][piv[j]][l];
+        		    			tmp=c-'a';
+        			    		if(arr[tmp][k]>maxv) maxv=arr[tmp][k];
+                		    }
+    						if(arr[j][k]>maxv+1) arr[j][k]=maxv+1;
+                    	}
+                    }
+                    piv[j]++;
                 }
-                piv[j]++;
-            }
             
-    		memset(before, -1, sizeof(before));
-			for(int l=0; l<n; l++){
-				for(int k=0; k<n; k++){
-					if(arr[l][k]!=123456789) before[l][k]=l;
-				}
-			}
-			floyd(n);
+        		memset(before, -1, sizeof(before));
+		    	for(int l=0; l<n; l++){
+			    	for(int k=0; k<n; k++){
+				    	if(arr[l][k]!=123456789) before[l][k]=l;
+    				}
+	    		}
+		    	floyd(n);
+            }
         }
     }
+    
+    for(int i=0; i<n; i++) arr[i][i]=0;
     
     for(int i=0; i<n; i++){
         for(int j=0; j<n; j++){
