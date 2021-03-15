@@ -34,3 +34,21 @@ int main(){
     cout << res << endl;
     return 0;
 }
+
+/* 더 좋은 풀이
+
+#include <cstdio>
+int n, s, a[250], d[55][250];
+int main() {
+	int i, j;
+	scanf("%d", &n);
+	for(j=1; j<=n; j++) scanf("%d", &a[j]);
+	for(i=1; i<=50; i++) for(j=1; j<=n; j++) {
+		d[i][j] = a[j]==i ? j+1 : d[i-1][d[i-1][j]];
+		if(d[i][j]) s = i;
+	}
+	printf("%d", s);
+	return 0;
+} by tg314
+
+*/
