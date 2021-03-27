@@ -2,17 +2,18 @@
 using namespace std;
 
 typedef long long ll;
+typedef unsigned long long ull;
 typedef __int128 i128;
 
-vector<ll> alist={2,3,5,7,11,13,17,19,23,29,31,37,41,43};
+vector<ll> res;
 
-ll mul(ll x, ll y, ll m){
-    return (i128)x*y%m;
+ull mul(ull x, ull y, ull m){
+    return (ull)((i128)x*y%m);
 }
 
-ll fastpow(ll x, ll y, ll m){
+ull fastpow(ull x, ull y, ull m){
+    ull r=1;
     x%=m;
-    ll r=1ULL;
     while(y){
         if(y&1) r=mul(r, x, m);
         x=mul(x, x, m);
@@ -21,71 +22,78 @@ ll fastpow(ll x, ll y, ll m){
     return r;
 }
 
-bool Miller_Rabin(ll n, ll a){
-    ll d=n-1;
-    while(!(d&1)){
-        if(fastpow(a, d, n)==n-1) return true;
-        d>>1;
+bool Miller_Rabin(ull n, ull a){
+	if(n%a==0) return false;
+	int cnt=0;
+    ull d=n-1;
+    while(d%2==0){
+        d>>=1;
+        cnt++;
     }
-    ll tmp=fastpow(a, d, n);
-    return (tmp==n-1 || tmp==1);
+    cnt--;
+    
+    ull tmp=fastpow(a, d, n);
+    if(tmp==1 || tmp==n-1) return true;
+    while(cnt--){
+        tmp=mul(tmp, tmp, n);
+        if(tmp==n-1) return true;
+    }
+    return false;
 }
 
 bool isPrime(ll n){
-    if(n<=1) return false;
-    if(n<=1e6){
-        for(ll i=2; i*i<=n; i++){
-            if(n%i==0) return false;
-        }
-        return true;
-    }
-    for(ll a : alist){
-        if(!Miller_Rabin(n, a)) return false;
-    }
-    return true;
+	if(n<=1) return false;
+	for(auto a : {2,3,5,7,11,13,17,19,23,29,31,37}){
+	    if(n == a) return true;
+		if(n>40 && !Miller_Rabin(n, a)) return false;
+	}
+	if(n<=40) return false;
+	return true;
 }
 
-ll c;
+ll Pollard_Rho(ll n){
+    ll x, y, c, r;
+    x=rand()%(n-2)+2; y=x;
+    c=rand()%(n-1)+1;
+    
+    auto f=[=](ll x){
+		return (mul(x, x, n)+c)%n;
+	};
+	
+    while(1){
+        x=f(x);
+        y=f(f(y));
+        r=__gcd(abs(x-y), n);
+        if(r==1) continue;
 
-ll floyd(ll x, ll n){
-    return (mul(x, x, n)+c)%n;
+        if(!isPrime(r)) return Pollard_Rho(r);
+        else return r;
+    }
 }
 
-void Pollard_Rho(ll n, vector<ll> v){
+void factorize(ll n){
+    while(n%2==0){
+        n>>=1;
+        res.push_back(2);
+    }
     if(n==1) return;
-    if(!(n&1)){
-        v.push_back(2);
-        Pollard_Rho(n/2, v);
-        return;
+    while(!isPrime(n)){
+        ll r=Pollard_Rho(n);
+        while(n%r==0){
+            res.push_back(r);
+            n/=r;
+        }
+        if(n==1) return;
+        
     }
-    if(isPrime(n)){
-        v.push_back(n);
-        return;
-    }
-    ll a, b, r=1;
-    a=b=rand()%(n-2)+2;
-    c=alist[rand()%13+1];
-    while(r==1){
-        a=floyd(a, n);
-        b=floyd(floyd(b, n), n);
-        r=__gcd(abs(a-b), n);
-    }
-    Pollard_Rho(r, v);
-    Pollard_Rho(n/r, v);
-}
-
-vector<ll> factorize(ll n){
-    vector<ll> res;
-    Pollard_Rho(n, res);
-    sort(res.begin(), res.end());
-    return res;
+    if(n>1) res.push_back(n);
 }
 
 int main(){
-    ios_base::sync_with_stdio(false);
-    cin.tie(0); cout.tie(0);
     ll n; cin >> n;
-    for(auto a:factorize(n)) cout << a << endl;
+    factorize(n);
+    sort(res.begin(), res.end());
+    for(auto a:res) cout << a << endl;
 
     return 0;
 }
