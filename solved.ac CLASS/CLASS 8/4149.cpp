@@ -96,4 +96,4 @@ int main(){
     for(auto a:res) cout << a << endl;
 
     return 0;
-}
+} 
