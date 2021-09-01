@@ -7,18 +7,20 @@ int n, s, d;
 bool vis[MAX];
 int parent[MAX];
 vector<int> tree[MAX];
-queue<int> q;
+queue<pair<int,int>> q;
+priority_queue <pair<int,int>> pq;
 
 void bfs(){
     while(!q.empty()){
-    	int cur=q.front();
+    	pair<int,int> cur=q.front();
     	q.pop();
-    	for(int i=0; i<tree[cur].size(); i++){
-        	int next=tree[cur][i];
+    	for(int i=0; i<tree[cur.first].size(); i++){
+        	int next=tree[cur.first][i];
         	if(!vis[next]){
         		vis[next]=true;
-            	q.push(next);
-            	parent[next]=cur;
+            	q.push({next, cur.second+1});
+            	pq.push({cur.second+1, next});
+            	parent[next]=cur.first;
         	}
     	}
     }
@@ -39,20 +41,11 @@ int main(){
         tree[node2].push_back(node1);
     }
 	
-	q.push(s);
+    pq.push({0,s});
+	q.push({s,0});
 	vis[s]=true;
     bfs();
     
-    priority_queue <pair<int,int>> pq;
-    for(i=1; i<n+1; i++){
-        cnt=0; tmp=i;
-        while(tmp!=s){
-            tmp=parent[tmp];
-            cnt++;
-        }
-        pq.push({cnt,i});
-    }
-
     memset(vis, 0, sizeof(vis));
     tmp=pq.size();
     cnt=0;
