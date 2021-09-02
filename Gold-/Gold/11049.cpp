@@ -17,18 +17,16 @@ int main(){
 
     int minv, tmp;
     for(int i=1; i<n; i++){
-        for(int j=i; j<n; j++){
+        for(int j=0; j<n-i; j++){
             minv=2147483647;
             for(int k=0; k<i; k++){
-                tmp=arr[j-i][0]*arr[j-i+k][1]*arr[j][1]+dp[k][j-i+k]+dp[i-k+1][j];
-                if(tmp<minv) minv=tmp;
-                cout << i << ' ' << j << ' ' << k << ' ' << arr[j-i][0]*arr[j-i+k][1]*arr[j][1] << endl; 
+                tmp=arr[j][0]*arr[j+k][1]*arr[j+i][1]+dp[k][j]+dp[i-k-1][j+k+1];
+                if(tmp<minv) minv=tmp; 
             }
-            dp[i][j]=tmp;
-            cout << i << ' ' << j << ' ' << dp[i][j] << endl;
+            dp[i][j]=minv;
         }
     }
-    cout << dp[n-1][n-1] << endl;
+    cout << dp[n-1][0] << endl;
 
     return 0;
 }
