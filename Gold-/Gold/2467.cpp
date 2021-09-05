@@ -17,13 +17,13 @@ int main(){
     int s=0, e=n-1;
     int res1=1000000001, res2=1000000001;
 
-    while(s<=e){
-        if(abs(res1+res2)>abs(arr[s]+arr[e]){
+    while(s<e){
+        if(abs(res1+res2)>abs(arr[s]+arr[e])){
             res1=arr[s];
             res2=arr[e];
         }
 
-        if(abs(s)>abs(e)) s++;
+        if(abs(arr[s])>abs(arr[e])) s++;
         else e--;
     }
 
