@@ -24,17 +24,17 @@ int main(){
     for(int j=0; j<n; j++){
         int piv=0;
         for(int i=1; i<sz[j]; i++){
-            while(piv>0 && cur[i]!=cur[piv]) piv=p[j][piv-1];
-            if(cur[i]==cur[piv]) p[j][i]=++piv;
+            while(piv>0 && cur[j][i]!=cur[j][piv]) piv=p[j][piv-1];
+            if(cur[j][i]==cur[j][piv]) p[j][i]=++piv;
         }
     }
-
+    
     int piv[501]={0};
     for(int i=0; i<s.size(); i++){
         for(int j=0; j<n; j++){
             while(piv[j]>0 && s[i]!=cur[j][piv[j]]) piv[j]=p[j][piv[j]-1];
             if(s[i]==cur[j][piv[j]]){
-                if(piv==sz-1){
+                if(piv[j]==sz[j]-1){
                     if(i==0 || i-sz[j]==-1) dp[i]=sz[j];
                     else dp[i]=max(dp[i], dp[i-sz[j]]+sz[j]);
                     piv[j]=p[j][piv[j]];
