@@ -10,6 +10,13 @@ int diag[9]={1, 1, -1, -1, 1, 0, -1, 0, 1};
 int tmp_board[102][102], ans[102][102];
 int clockwise=0;
 
+bool IsImpossible(){
+    if((abs(r2-r1)+abs(c2-c1))%2==0) return true;
+    if(r1==r2 && N==2) return true;
+    if(c1==c2 && M==2) return true;
+    return false;
+}
+
 bool IsStartPoint(int x1, int y1){
     return (x1==r1 && y1==c1);
 }
@@ -78,9 +85,9 @@ void Solve(){
         
         for(int i=0; i<4; i++){
             bool flag=0;
-            cout <<r1+rpri[i]<< ' '<<c1+cpri[i] <<' ' << i << endl;
+            //cout <<r1+rpri[i]<< ' '<<c1+cpri[i] <<' ' << i << endl;
             if(IsInBoard(r1+rpri[i], c1+cpri[i]) && ans[r1+rpri[i]][c1+cpri[i]]==0){
-            	cout <<r1+rpri[i]<< ' '<<c1+cpri[i] <<' ' << '?' << endl;
+            	//cout <<r1+rpri[i]<< ' '<<c1+cpri[i] <<' ' << '?' << endl;
                 cnt++;
                 ans[r1+rpri[i]][c1+cpri[i]]=p1_piv;
                 p1_piv++;
@@ -89,12 +96,12 @@ void Solve(){
                     if(IsInBoard(r1+rpri[i]+diag[j], c1+cpri[i]+diag[j+1]) && ans[r1+rpri[i]+diag[j]][c1+cpri[i]+diag[j+1]]==0){
                         int tcnt=0;
                         for(int k=0; k<4; k++){
-                            if(IsInBoard(r1+rpri[i]+diag[j]+d[k], c1+cpri[i]+diag[j+1]+d[k+1]) && ans[r1+rpri[i]+diag[j]+d[k]][c1+cpri[i]+diag[j+1]+d[k+1]]==0) {tcnt++; cout << "A";}
-                            if(IsInBoard(r1+rpri[i]+diag[j]+d[k], c1+cpri[i]+diag[j+1]+d[k+1]) && IsStartPoint(r1+rpri[i]+diag[j]+d[k], c1+cpri[i]+diag[j+1]+d[k+1])) {tcnt++; cout << "B";}
-                            if(IsInBoard(r1+rpri[i]+diag[j]+d[k], c1+cpri[i]+diag[j+1]+d[k+1]) && IsEndPoint(r1+rpri[i]+diag[j]+d[k], c1+cpri[i]+diag[j+1]+d[k+1])) {tcnt++; cout << "C";}
-                            cout << tcnt;
+                            if(IsInBoard(r1+rpri[i]+diag[j]+d[k], c1+cpri[i]+diag[j+1]+d[k+1]) && ans[r1+rpri[i]+diag[j]+d[k]][c1+cpri[i]+diag[j+1]+d[k+1]]==0) {tcnt++; /*cout << "A";*/}
+                            if(IsInBoard(r1+rpri[i]+diag[j]+d[k], c1+cpri[i]+diag[j+1]+d[k+1]) && IsStartPoint(r1+rpri[i]+diag[j]+d[k], c1+cpri[i]+diag[j+1]+d[k+1])) {tcnt++; /*cout << "B";*/}
+                            if(IsInBoard(r1+rpri[i]+diag[j]+d[k], c1+cpri[i]+diag[j+1]+d[k+1]) && IsEndPoint(r1+rpri[i]+diag[j]+d[k], c1+cpri[i]+diag[j+1]+d[k+1])) {tcnt++; /*cout << "C";*/}
+                            //cout << tcnt;
                         }
-                        if(tcnt<2) {diagflag=1; cout << "=+=" << diag[i] << ' ' << diag[i] << endl;}
+                        if(tcnt<2) {diagflag=1; /*cout << "=+=" << diag[i] << ' ' << diag[i] << endl;*/}
                     }
                 }
 
@@ -106,7 +113,7 @@ void Solve(){
 
                 }
                 else{
-                	cout << rpri[i] << cpri[i] << "FDSA" << endl;
+                	//cout << rpri[i] << cpri[i] << "FDSA" << endl;
                     r1+=rpri[i];
                     c1+=cpri[i];
                     break;
@@ -120,14 +127,14 @@ void Solve(){
         if(bcnt==cnt){ cout << "-1\n"; return;}
         bcnt=cnt;
         
-    	cout << r1 << ' ' << c1 << ' ' << cnt << endl;//
+    	//cout << r1 << ' ' << c1 << ' ' << cnt << endl;
     	
-	    for(int i=1; i<=M; i++){
+	    /*for(int i=1; i<=M; i++){
 	        for(int j=1; j<=N; j++){
 	            cout << ans[i][j] <<' ';
 	        }
 	        cout << endl;
-	    }
+	    }*/
     }
 
     while(clockwise%4!=0) ClockwiseBoardTurn();
@@ -148,7 +155,7 @@ void Solve(){
     //cout << r1 << c1 << endl;
     int rcur=r1, ccur=c1;
     for(int i=1; i<N*M+1; i++){
-        cout << rcur << ' ' << ccur << "\n";
+        //cout << rcur << ' ' << ccur << "\n";
         for(int j=0; j<4; j++){
             if(IsInBoard(rcur+d[j],ccur+d[j+1]) && ans[rcur+d[j]][ccur+d[j+1]]==i+1){
                 rcur+=d[j];
@@ -157,13 +164,13 @@ void Solve(){
             }
         }
     }
-    /*
+    
     for(int i=1; i<=M; i++){
         for(int j=1; j<=N; j++){
-            cout << ans[i][j] <<' ';
+            cout << ans[i][j] << ' ';
         }
         cout << endl;
-    }*/
+    }
 }
 
 int main(){
@@ -176,7 +183,7 @@ int main(){
         cin >> M >> N;
         cin >> r1 >> c1;
         cin >> r2 >> c2;
-        if((abs(r2-r1)+abs(c2-c1))%2==0) cout << "-1\n";
+        if(IsImpossible()) cout << "-1\n";
         else{
             for(int i=0; i<102; i++) memset(ans[i], 0, sizeof(ans[i]));
             while(r2<r1 || c2<c1) ClockwisePointTurn();
