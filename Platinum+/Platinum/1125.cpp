@@ -5,6 +5,24 @@ typedef long long ll;
 
 ll cnt[6]={0};
 
+int main(){
+    ll x1,x2,y1,y2; cin >> x1 >> y1 >> x2 >> y2;
+
+
+
+
+    return 0;
+}
+
+
+/*
+#include <bits/stdc++.h>
+using namespace std;
+
+typedef long long ll;
+
+ll cnt[6]={0};
+
 bool isHorizontal(ll x, ll y){
     return ((x/5+y/5)%2==0);
 }
